@@ -1,0 +1,11 @@
+passenger_id,name,email,phone,flight_id,seat,status,loyalty_tier
+P001,John Smith,john.smith@example.com,555-123-4567,FL001,12A,Checked In,Platinum
+P002,Jane Doe,jane.doe@example.com,555-234-5678,FL001,12B,Checked In,Gold
+P003,Robert Johnson,robert.johnson@example.com,555-345-6789,FL002,15C,Checked In,Silver
+P004,Emily Wilson,emily.wilson@example.com,555-456-7890,FL002,15D,Checked In,Bronze
+P005,Michael Brown,michael.brown@example.com,555-567-8901,FL003,8F,Checked In,Platinum
+P006,Sarah Davis,sarah.davis@example.com,555-678-9012,FL003,8E,Checked In,None
+P007,David Miller,david.miller@example.com,555-789-0123,FL004,20A,Checked In,Gold
+P008,Lisa Garcia,lisa.garcia@example.com,555-890-1234,FL004,20B,Checked In,Silver
+P009,James Rodriguez,james.rodriguez@example.com,555-901-2345,FL005,5C,Checked In,Bronze
+P010,Jennifer Martinez,jennifer.martinez@example.com,555-012-3456,FL005,5D,Checked In,None
