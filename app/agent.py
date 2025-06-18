@@ -12,36 +12,29 @@ sys.path.append(str(project_root))
 from strands import Agent, tool
 from strands.models import BedrockModel
 from models.dynamodb import DynamoDBService
+from mcp import stdio_client, StdioServerParameters
+from strands.tools.mcp import MCPClient
 
 class DelayCompanionAgent:
     """DelayCompanion airline assistant agent using Strands Agent SDK"""
-    
     def __init__(self):
+   
         """Initialize the DelayCompanion agent"""
         # Initialize DynamoDB service
+        self.stdio_mcp_client = MCPClient(lambda: stdio_client(
+        StdioServerParameters(
+        command="uvx", 
+        args=["awslabs.dynamodb-mcp-server@latest"],
+        env = {
+        "DDB-MCP-READONLY": "true",
+        "AWS_PROFILE": "default",
+        "AWS_REGION": "us-west-2",
+        "FASTMCP_LOG_LEVEL": "ERROR"
+        }
+    )
+))
         self.db_service = DynamoDBService()
-        
-        # Define custom tools
-        self.tools = [
-            self.get_delayed_flights,
-            self.get_flight_details,
-            self.get_passenger_details,
-            self.get_rebooking_options,
-            self.rebook_passenger,
-            self.generate_handoff_context,
-            self.format_delay_message
-        ]
-        
-        # Create the agent with Claude Sonnet model
-        self.agent = Agent(
-            model=BedrockModel(
-                model_id="us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-                region_name="us-west-2",
-                temperature=0.2
-            ),
-            tools=self.tools,
-            system_prompt=self._get_system_prompt()
-        )
+       
     
     def _get_system_prompt(self):
         """Get the system prompt for the agent"""
@@ -256,8 +249,21 @@ We apologize for the inconvenience and are working to get you to your destinatio
                 # Add context to the query
                 query = f"[CONTEXT: Passenger ID: {passenger_id}, Name: {passenger.get('name')}, " \
                        f"Flight: {flight.get('flight_number')}, Status: {flight.get('status')}]\n\n{query}"
-        
+        with self.stdio_mcp_client:
+            # Get the tools from the MCP server
+            tools = self.stdio_mcp_client.list_tools_sync()
+            print(f"Available tools: {tools}")
+        # Create the agent with Claude Sonnet model
+            self.agent = Agent(
+            model=BedrockModel(
+                model_id="us.anthropic.claude-3-7-sonnet-20250219-v1:0",
+                region_name="us-west-2",
+                temperature=0.2
+            ),
+            tools=tools,
+            system_prompt=self._get_system_prompt()
+        )
         # Process the query with the agent
-        response = self.agent(query)
+            response = self.agent(query)
         
         return response.message, context
