@@ -33,6 +33,10 @@ class DelayCompanionAgent:
         }
     )
 ))
+        self.mailMCP_client = MCPClient(lambda: stdio_client(StdioServerParameters(
+            command="npx",
+            args=["@gongrzhe/server-gmail-autoauth-mcp"]
+        )))
         self.db_service = DynamoDBService()
        
     
@@ -45,6 +49,7 @@ Your primary responsibilities are:
 2. Send personalized delay notifications with rebooking options
 3. Help passengers select new flights or request assistance
 4. Generate handoff context for call center agents when needed
+5. Send email to user regarding new bookings or confirmations of passenger to stay on current flight.
 
 Communication style:
 - Use clear, concise language with a helpful and empathetic tone
@@ -253,9 +258,9 @@ We apologize for the inconvenience and are working to get you to your destinatio
                 # Add context to the query
                 query = f"[CONTEXT: Passenger ID: {passenger_id}, Name: {passenger.get('name')}, " \
                        f"Flight: {flight.get('flight_number')}, Status: {flight.get('status')}]\n\n{query}"
-        with self.stdio_mcp_client:
+        with self.stdio_mcp_client, self.mailMCP_client:
             # Get the tools from the MCP server
-            tools = self.stdio_mcp_client.list_tools_sync()
+            tools = self.stdio_mcp_client.list_tools_sync() + self.mailMCP_client.list_tools_sync()
             print(f"Available tools: {tools}")
         # Create the agent with Claude Sonnet model
             self.agent = Agent(
