@@ -29,7 +29,7 @@ class DelayCompanionAgent:
         "DDB-MCP-READONLY": "true",
         "AWS_PROFILE": "default",
         "AWS_REGION": "us-west-2",
-        "FASTMCP_LOG_LEVEL": "ERROR"
+        "FASTMCP_LOG_LEVEL": "DEBUG"
         }
     )
 ))
@@ -61,6 +61,10 @@ When interacting with passengers:
 5. Ask for passenger preferences (window/aisle seat, time preferences)
 
 Always maintain a professional, helpful tone while being concise and informative.
+
+NOTE:
+- You have access to the following dynamo db databases:[DelayCompanion_Flights, DelayCompanion_Passengers]
+- Use the following database to get information about flights and passengers
 """
     
     @tool
