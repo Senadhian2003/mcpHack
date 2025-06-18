@@ -26,7 +26,7 @@ class DelayCompanionAgent:
         command="uvx", 
         args=["awslabs.dynamodb-mcp-server@latest"],
         env = {
-        "DDB-MCP-READONLY": "true",
+        
         "AWS_PROFILE": "default",
         "AWS_REGION": "us-west-2",
         "FASTMCP_LOG_LEVEL": "DEBUG"
